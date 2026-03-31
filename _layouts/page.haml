@@ -1,0 +1,10 @@
+---
+layout: default
+---
+%article.prose
+  %header.prose__header
+    %h1.prose__title {{ page.title }}
+    {% if page.description %}
+    %p.prose__lead {{ page.description }}
+    {% endif %}
+  {{ content }}

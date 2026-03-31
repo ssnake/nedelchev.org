@@ -1,0 +1,19 @@
+---
+layout: default
+---
+{{ content }}
+
+{% assign posts = site.posts | limit: 5 %}
+{% if posts.size > 0 %}
+%section.post-list
+  %h2.post-list__heading Recent writing
+  %ul.post-list__items{role: "list"}
+    {% for post in posts %}
+    %li.post-list__item
+      %a.post-list__link{href: "{{ post.url | relative_url }}"} {{ post.title }}
+      %time.post-list__date{datetime: "{{ post.date | date_to_xmlschema }}"} {{ post.date | date: "%b %-d, %Y" }}
+    {% endfor %}
+  {% if site.posts.size > 5 %}
+  %a.post-list__more{href: "{{ site.baseurl }}/blog/"} All posts →
+  {% endif %}
+{% endif %}

@@ -1,0 +1,38 @@
+title: Nedelchev
+description: Personal site of Nedelchev — developer, thinker, builder.
+baseurl: ""
+url: "https://nedelchev.org"
+
+author:
+  name: Nedelchev
+  email: max@nedelchev.org
+
+nav:
+  - title: Home
+    url: /
+  - title: About
+    url: /about/
+  - title: Blog
+    url: /blog/
+
+plugins:
+  - jekyll-feed
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
+
+permalink: /blog/:year/:month/:day/:title/
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/

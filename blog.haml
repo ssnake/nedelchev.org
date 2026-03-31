@@ -1,0 +1,17 @@
+---
+layout: default
+title: Blog
+permalink: /blog/
+---
+.blog-index
+  %h1.blog-index__heading Blog
+  {% if site.posts.size > 0 %}
+  %ul.post-list__items{role: "list"}
+    {% for post in site.posts %}
+    %li.post-list__item
+      %a.post-list__link{href: "{{ post.url | relative_url }}"} {{ post.title }}
+      %time.post-list__date{datetime: "{{ post.date | date_to_xmlschema }}"} {{ post.date | date: "%b %-d, %Y" }}
+    {% endfor %}
+  {% else %}
+  %p{style: "color: var(--color-text-muted)"} No posts yet.
+  {% endif %}

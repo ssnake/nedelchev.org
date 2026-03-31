@@ -1,0 +1,14 @@
+---
+layout: default
+---
+%article.prose
+  %header.prose__header
+    %time.prose__date{datetime: "{{ page.date | date_to_xmlschema }}"} {{ page.date | date: "%B %-d, %Y" }}
+    %h1.prose__title {{ page.title }}
+    {% if page.description %}
+    %p.prose__lead {{ page.description }}
+    {% endif %}
+  .prose__body
+    {{ content }}
+  %footer.prose__footer
+    %a.back-link{href: "{{ site.baseurl }}/blog/"} ← All posts
