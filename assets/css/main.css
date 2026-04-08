@@ -372,6 +372,10 @@ a {
 }
 
 /* Prose body typography */
+.prose__body {
+  text-align: justify;
+}
+
 .prose__body > * + * {
   margin-top: var(--space-6);
 }

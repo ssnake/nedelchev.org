@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>v86 ReactOS - Fixed Version</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        #screen_container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            border: 2px solid #333;
+            background: #000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #screen_container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            image-rendering: pixelated;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+        .controls button {
+            margin: 5px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .controls button:hover { background: #1976D2; }
+        .controls button:disabled { background: #ccc; cursor: not-allowed; }
+        #status {
+            text-align: center;
+            font-family: monospace;
+            color: #666;
+            margin: 10px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>🖥️ ReactOS v86 Emulator</h1>
+
+    <div id="screen_container"></div>
+
+    <div class="controls">
+        <button id="start_btn">▶️ Start Emulator</button>
+        <button id="reset_btn" disabled>↻ Reset</button>
+        <button id="save_btn" disabled>💾 Save State</button>
+        <button id="restore_btn" disabled>📂 Restore State</button>
+    </div>
+
+    <div id="status">Click "Start Emulator" to begin</div>
+
+    <script src="/assets/v86/libv86.js"></script>
+    <script>
+        "use strict";
+
+        let emulator = null;
+
+        const startBtn = document.getElementById("start_btn");
+        const resetBtn = document.getElementById("reset_btn");
+        const saveBtn = document.getElementById("save_btn");
+        const restoreBtn = document.getElementById("restore_btn");
+        const statusDiv = document.getElementById("status");
+
+        const IDB_NAME = "v86-states";
+        const IDB_STORE = "states";
+        const IDB_KEY = "reactos";
+
+        // IndexedDB helpers
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function idbSave(state) {
+            return openDB().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, "readwrite");
+                tx.objectStore(IDB_STORE).put(state, IDB_KEY);
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error);
+            }));
+        }
+
+        function idbLoad() {
+            return openDB().then(db => new Promise((resolve, reject) => {
+                const req = db.transaction(IDB_STORE).objectStore(IDB_STORE).get(IDB_KEY);
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => reject(req.error);
+            }));
+        }
+
+        function idbDelete() {
+            return openDB().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, "readwrite");
+                tx.objectStore(IDB_STORE).delete(IDB_KEY);
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error);
+            }));
+        }
+
+        function updateStatus(msg) {
+            statusDiv.textContent = msg;
+            console.log("[v86]", msg);
+        }
+
+        function buildConfig(initialState) {
+            const config = {
+                wasm_path: "/assets/v86/v86.wasm",
+                memory_size: 512 * 1024 * 1024,
+                vga_memory_size: 8 * 1024 * 1024,
+
+                screen_container: document.getElementById("screen_container"),
+
+                bios: { url: "/assets/v86/seabios.bin" },
+                vga_bios: { url: "/assets/v86/vgabios.bin" },
+
+                hda: {
+                    url: "/assets/v86/images/reactos.img",
+                    async: true,
+                    size: 2 * 1024 * 1024 * 1024
+                },
+
+                boot_order: 0x132,
+                acpi: true,
+                autostart: true,
+            };
+
+            if (initialState) {
+                config.initial_state = { buffer: initialState };
+            }
+
+            return config;
+        }
+
+        function startEmulator(savedState) {
+            startBtn.disabled = true;
+            updateStatus("Initializing emulator...");
+
+            emulator = new V86(buildConfig(savedState));
+
+            emulator.add_listener("emulator-ready", function() {
+                updateStatus(savedState
+                    ? "State restored — ReactOS ready!"
+                    : "Emulator ready — booting ReactOS...");
+                resetBtn.disabled = false;
+                saveBtn.disabled = false;
+            });
+
+            emulator.add_listener("download-progress", function(e) {
+                if (e.file_name && e.file_name.includes("reactos.img")) {
+                    const percent = e.total ? Math.round(e.loaded / e.total * 100) : 0;
+                    const mb = (e.loaded / (1024 * 1024)).toFixed(1);
+                    updateStatus(`Downloading ReactOS: ${mb}MB (${percent}%)`);
+                }
+            });
+
+            emulator.add_listener("download-error", function(e) {
+                updateStatus("Error: " + e.error_message);
+                startBtn.disabled = false;
+            });
+        }
+
+        startBtn.addEventListener("click", async function() {
+            updateStatus("Checking for saved state...");
+            try {
+                const saved = await idbLoad();
+                if (saved) {
+                    updateStatus("Found saved state — restoring...");
+                    startEmulator(saved);
+                } else {
+                    updateStatus("No saved state — cold booting...");
+                    startEmulator(null);
+                }
+            } catch (e) {
+                console.warn("IndexedDB unavailable:", e);
+                startEmulator(null);
+            }
+        });
+
+        resetBtn.addEventListener("click", async function() {
+            if (!emulator) return;
+            await idbDelete().catch(() => {});
+            updateStatus("Cold rebooting (saved state cleared)...");
+            emulator.restart();
+        });
+
+        saveBtn.addEventListener("click", async function() {
+            if (!emulator) return;
+            updateStatus("Saving state...");
+            try {
+                const state = await emulator.save_state();
+                const mb = (state.byteLength / 1024 / 1024).toFixed(1);
+                try {
+                    await idbSave(state);
+                    updateStatus(`State saved to browser storage (${mb}MB) — will restore on next load`);
+                } catch (e) {
+                    updateStatus(`IndexedDB failed (${e.message}) — use Download to save the file instead`);
+                }
+                // Offer a download for hosting as a pre-loaded initial_state
+                const existing = statusDiv.nextElementSibling;
+                if (existing && existing.tagName === "A") existing.remove();
+                const blob = new Blob([state]);
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "reactos.state.bin";
+                a.textContent = "Download state file";
+                a.style.cssText = "display:block;text-align:center;margin:8px;color:#2196F3";
+                statusDiv.after(a);
+                restoreBtn.disabled = false;
+            } catch (e) {
+                updateStatus("Error saving: " + e.message);
+            }
+        });
+
+        restoreBtn.addEventListener("click", async function() {
+            if (!emulator) return;
+            updateStatus("Loading saved state...");
+            try {
+                const saved = await idbLoad();
+                if (saved) {
+                    emulator.restore_state(saved);
+                    updateStatus("State restored!");
+                } else {
+                    updateStatus("No saved state found.");
+                }
+            } catch (e) {
+                updateStatus("Error restoring: " + e.message);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", function(e) {
+            if (e.ctrlKey && e.altKey && e.key === 'r') {
+                e.preventDefault();
+                if (emulator) emulator.restart();
+            }
+        });
+    </script>
+</body>
+</html>
