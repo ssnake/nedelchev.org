@@ -4,3 +4,7 @@ _site
 .jekyll-metadata
 vendor
 .claude
+reactos.img
+reactos.state.bin
+game/
+*.iso

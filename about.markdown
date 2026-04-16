@@ -95,7 +95,7 @@ Here you can play it in your browser using ReactOS emulated via v86!
 </style>
 
 <div class="vm-wrap">
-  <div class="vm-note"><strong>Note:</strong> This downloads ~119MB on first load (pre-booted snapshot). The game is cached after the first visit.</div>
+  <div class="vm-note"><strong>Note:</strong> This downloads ~20MB on first load (compressed pre-booted snapshot). The game is cached after the first visit.</div>
   <div id="screen_container"></div>
   <div class="vm-controls">
     <button id="start_btn" class="vm-btn" onclick="startGame()">Start Emulator</button>
@@ -123,16 +123,19 @@ function startGame() {
         bios: { url: "/assets/v86/seabios.bin" },
         vga_bios: { url: "/assets/v86/vgabios.bin" },
         hda: {
-            url: "/assets/v86/images/reactos.img",
+            url: "/assets/v86/images/reactos.img.zst",
             async: true,
-            size: 2 * 1024 * 1024 * 1024
+            size: 512 * 1024 * 1024,
+            use_parts: true,
+            fixed_chunk_size: 99 * 1024 * 1024
         },
         initial_state: {
-            url: "/assets/v86/images/reactos.state.bin",
+            url: "/assets/v86/images/reactos.state.bin.zst",
         },
         boot_order: 0x132,
         acpi: true,
         autostart: true,
+        disable_speaker: true,
     });
 
     emulator.add_listener("emulator-ready", function() {

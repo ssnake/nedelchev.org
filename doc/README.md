@@ -59,3 +59,41 @@ python3 doc/serve-test.py
    assets/v86/images/reactos.state.bin
    ```
 5. The about page will load from this snapshot on next visit (~119 MB download, cached after first load)
+
+## 5. Compress the state file
+
+Compress the state file with zstd to reduce download size from ~119 MB to ~20 MB:
+
+```bash
+cd assets/v86/images && zstd -19 reactos.state.bin -o reactos.state.bin.zst
+```
+
+v86 detects the `.zst` extension and automatically decompresses the state file before restoring. This achieves ~83% size reduction with no code changes required.
+
+## 6. Split the disk image into chunks
+
+Large disk images can be split into fixed-size chunks for serving. Each chunk file is named `<stem>-<start>-<end>.<ext>`.
+
+```
+Usage: split-image.py [--zstd|--gzip] partsize filename-in filename-out-with-%d-%d
+```
+
+- **`partsize`** — chunk size; supports `k`/`kb` and `m`/`mb` suffixes (e.g. `99m`)
+- **`--zstd`** — compress each chunk with `zstd -19` after writing
+- **`--gzip`** — compress each chunk with `gzip -9` after writing
+- **`filename-out-with-%d-%d`** — output path template; the two `%d` are replaced by the byte offsets of the chunk
+
+Example — split `reactos.img` into 99 MB zstd-compressed chunks:
+
+```bash
+python3 doc/split-image.py --zstd 99m \
+  assets/v86/images/reactos.img \
+  assets/v86/images/chunks/reactos-%d-%d.img
+```
+
+This produces files such as:
+```
+assets/v86/images/chunks/reactos-0-103809024.img.zst
+assets/v86/images/chunks/reactos-103809024-207618048.img.zst
+...
+```
