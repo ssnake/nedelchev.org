@@ -8,21 +8,21 @@ permalink: /about/
 
 ## Welcome everyone!
 
-My name is Max. I'm a computer geek from Ukraine.
+My name is Max. I'm a computer geek from Ukraine. If you want to reach me, you can email me at [max@nedelchev.org](mailto:max@nedelchev.org).
 
 
-## Background
+## Yearly years
 
 I've been playing with computers since I was a kid. My father was an engineer and he was into electronics. He could repair TVs and radios. He was subscribed to a magazine that was promoting a ZX Spectrum kit. So, my first computer was a ZX Spectrum which was assembled by my dad.
 
 The ZX Spectrum had a rectangle-shaped box with a keyboard. It connected to a TV set. Games were loaded from cassette tapes. I started learning programming. The first language was BASIC. My first programs were "PLOT and DRAW" programs to draw pictures of cars, houses, etc. Then I got acquainted with IF and FOR commands. By leveraging these commands, I was able to create simple games such as HIGH and LOW.
 ![ZX Spectrum](/assets/images/zx_spectrum.jpg)
 After the ZX Spectrum, I got a Soviet PC called Practic. It had a black and white screen and a diskette drive. I got acquainted with MS-DOS. At the same time, my friend from my building had a 486DX2 computer which was more powerful, and he could play games like Prince of Persia, Civilization I, Supaplex, Metal Mutants, and Wolfenstein 3D. Unfortunately, my PC was not able to run almost all of these games. For example, I was able to run Prince of Persia, but the performance was slow—the speed was like 0.5x. So, I started to learn programming in order to create my own games, because when you're a kid, all you want to do is play games.
-![Practic PC](/assets/images/practik.jpg)
+![Practic PC](/assets/images/pracktik2.png)
 
 A significant improvement came with the AMD K5 PR133. It was 1996. It was the era of Doom 2, Quake, Duke Nukem 3D, etc. I kept learning languages. The languages on my plate were Pascal and C/C++, plus a bit of assembler.
 
-A further improvement was a PC with Celeron 333MHz. I got familiar with overclocking. I was able to overclock it to 413MHz. PC games were Half-Life, Unreal Tournament, Warcraft 2, etc. As for programming frameworks, at that time Delphi was super popular. I started learning Win32 API, DirectX, and Delphi.
+Around the year 2000, I upgraded to a PC powered by an Intel Celeron 333MHz — a significant leap forward. It was around this time that I discovered overclocking. By adjusting the front-side bus frequency, I managed to push the CPU to a stable 413MHz, squeezing out extra performance without spending a penny. The gaming scene was thriving: I spent countless hours in Half-Life, Unreal Tournament, and Warcraft 2, games that felt like technological marvels at the time. On the programming side, Delphi had taken the Windows development world by storm with its rapid application development approach. I dug into Delphi alongside Win32 API and DirectX, learning how to build native Windows applications and experiment with real-time graphics — the foundation of my ambition to create my own games.
 
 At that time, the internet was not so available. It was expensive and slow. We were using dial-up connections with 56K modems. In our building, we set up a LAN 10Mbps network which connected 3 apartments. This allowed us to play games together without the internet. We played FIFA 99, Duke Nukem 3D, Warcraft 2, Half-Life, and Red Alert. However, one of our most favorite games was [MineBombers](https://fi.wikipedia.org/wiki/Mine_Bombers).
 
@@ -32,12 +32,28 @@ At that time, the internet was not so available. It was expensive and slow. We w
 Mine Bombers is a mixture of Bomberman and Boulder Dash in which 2-4 players mine for gold and diamonds while trying to kill each other. It was released for DOS and came with a level editor.
 
 I had a strong desire to create my own version of MineBombers but for Windows and with network play. I managed to create an alpha version of it. It allowed playing with up to 4 players on the same computer, but I never managed to implement network play.
+You can check the source code [here](https://github.com/ssnake/tnt).
 
 Here you can play it in your browser using ReactOS emulated via v86!
 
 **Controls:**
-- Player 1: WASD to move, Q to place bomb
-- Player 2: IJKL to move, M to place bomb
+- Player 1: 
+  - SEDF to move
+  - 1 - stop
+  - q - place a bomb/fire
+  - a - select a weapon
+  - z - trigger remote detonators
+- Player 2: 
+  - Arrows to move
+  - Enter - place a bomb/fire
+  - Ctrl - select a weapon
+  - Space - trigger remote detonators
+- Player 3:
+  - Numpads - to move
+  - Numpad 0 - stop
+  - Numpad 1 - place a bomb/fire
+  - Numpad 2 - trigger remote detonators
+  - Numpad . - select a weapon
 
 <style>
   .vm-wrap { max-width: 850px; margin: var(--space-8) auto; }
@@ -157,14 +173,18 @@ function startGame() {
     updateStatus("Loading v86 components...");
 }
 </script>
+## NASA Hackathon
+
+In 2016, I participated in the NASA Space Apps Challenge, a global hackathon where participants from diverse backgrounds collaborate to solve real-world problems presented by NASA. I competed locally at the event in Kyiv, Ukraine.
+
+Among the various challenges provided by NASA, I chose to focus on aircraft contrails (condensation trails). Scientists often struggle to distinguish natural cloud formations from artificial contrails, making atmospheric research more difficult. To address this, our team developed a specialized tool to help researchers accurately identify and study these formations. Here is a demonstration of our solution:
+
+<iframe title="vimeo-player" src="https://player.vimeo.com/video/164688220?h=c8c889c35e" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>
+
+Our application won the silver medal at the local stage and was selected as a Global Nominee. You can learn more about it on our [official project page](https://2016.spaceappschallenge.org/challenges/aero/clouds-or-contrails/projects/contrails).
 
 ## Nowadays
 
-I have extensive experience with frameworks and technologies, but I'm still learning new things.
-What matters to me is critical thinking and the capability to think outside the box. 
-
-Feel free to contact me if you have any questions or want to collaborate on a project.
-
-[max@nedelchev.org](mailto:max@nedelchev.org)
+I've started this blog in the era of raising of AI. Nowadays AI agents are capable to do human-like tasks. It seems that the future is already here.
 
 </div>
