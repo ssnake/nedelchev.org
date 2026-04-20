@@ -185,6 +185,6 @@ Our application won the silver medal at the local stage and was selected as a Gl
 
 ## Nowadays
 
-I've started this blog in the era of raising of AI. Nowadays AI agents are capable to do human-like tasks. It seems that the future is already here.
+I've started this blog in the era of Generative AI's explosive growth. Over the past three years, we've witnessed an astonishing transformation: AI has evolved from basic chatbot conversations to systems that can replace entire development teams. The question is no longer "can we implement this?" but rather "what should we implement?" Modern AI models can code, design, test, and deploy complete applications — effectively replacing what once required a small software company. The technical barriers that once limited innovation have crumbled, leaving imagination and creativity as the only true bottlenecks. We're living in an era where anyone with a vision can bring it to life, and I'm excited to be part of this technological renaissance.
 
 </div>
